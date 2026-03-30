@@ -1,0 +1,24 @@
+import sqlite3
+
+def init_database():
+    """Create a ledger to track value exchange."""
+    connection = sqlite3.connect("value_vault.db")
+    cursor = connection.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY, 
+            name TEXT, 
+            balance REAL
+        )
+    """)
+    connection.commit()
+    return connection
+
+def record_transaction(connection, user_id, amount):
+    """The 'lever' in action: updating a global state instantly."""
+    cursor = connection.cursor()
+    cursor.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (amount, user_id))
+    connection.commit()
+    print(f"Recorded ${amount} for User {user_id}")
+
+# DB = init_database()
